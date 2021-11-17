@@ -1,4 +1,5 @@
 from django.contrib import admin
+from django.contrib.auth.models import Group, User
 from django.utils.safestring import mark_safe
 
 from . import models as m
@@ -9,19 +10,45 @@ class StaffAdmin(admin.ModelAdmin):
 	"""Сотрудники"""
 	list_display = ('last_name', 'name_patronamic')  # что видно о сотреднике не переходя на его страницу
 	search_fields = ('last_name', 'name_patronamic')  # по каким полям реализован поиск
-	readonly_fields = ('get_image', 'gender')
+	readonly_fields = ('get_image', '_gender')
+	exclude = ['gender']
 
 	def get_image(self, obj):
 		return mark_safe(f'<img src={obj.photo} width="120" height="140"')
 
+	def has_add_permission(self, request):
+		return True
+
+	def has_delete_permission(self, request, obj=None):
+		return False
+
+	def has_view_permission(self, request, obj=None):
+		return True
+
+	def has_change_permission(self, request, obj=None):
+		return True
+
 
 @admin.register(m.Passport)
 class PassportAdmin(admin.ModelAdmin):
-	pass
+
+	def has_add_permission(self, request):
+		return True
+
+	def has_delete_permission(self, request, obj=None):
+		return False
+
+	def has_view_permission(self, request, obj=None):
+		return True
+
+	def has_change_permission(self, request, obj=None):
+		return True
 
 
 class PassportInline(admin.StackedInline):
 	model = m.Passport
+	readonly_fields = ('_gender',)
+	exclude = ['gender']
 
 	def get_extra(self, request, obj=None, **kwargs):
 		extra = 0
@@ -34,15 +61,31 @@ class ClientAdmin(admin.ModelAdmin):
 	list_display = ['last_name', 'name_patronymic']  # что видно о клиенте не переходя на его страницу
 	search_fields = ('last_name', 'name_patronymic')  # по каким полям реализован поиск
 	readonly_fields = ('_gender',)
+	exclude = ['gender']
 	inlines = [
 		PassportInline,
 	]
+
+	def has_add_permission(self, request):
+		return True
+
+	def has_delete_permission(self, request, obj=None):
+		return False
+
+	def has_view_permission(self, request, obj=None):
+		return True
+
+	def has_change_permission(self, request, obj=None):
+		return True
 
 
 class ManagerAdminArea(admin.AdminSite):  # окружение менеджера
 	site_header = 'Manager'  # надпись в хедере главной страницы и при авторизации
 
 
+# admin.site.register(m.Staff, AdminPerms)
+# admin.site.unregister(Group)
+# admin.site.unregister(User)
 manager_site = ManagerAdminArea(name='ManagerAdmin')
 # manager_site.register(m.Staff)
 # admin.site.register(m.City)
