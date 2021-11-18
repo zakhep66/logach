@@ -55,6 +55,9 @@ class AuthUser(models.Model):
         managed = False
         db_table = 'auth_user'
 
+    def __str__(self):
+        return self.username
+
 
 class AuthUserGroups(models.Model):
     id = models.BigAutoField(primary_key=True)
@@ -382,10 +385,10 @@ class Staff(models.Model):
     gender = models.IntegerField(verbose_name="пол")
     date_of_birth = models.DateField(blank=True, null=True, verbose_name="дата рождения")
     photo = models.CharField(max_length=255, blank=True, null=True, verbose_name="фото")
-    user = models.OneToOneField(AuthUser, models.DO_NOTHING, db_column='user', blank=True, null=True)
+    user = models.OneToOneField(AuthUser, models.CASCADE, db_column='user', blank=True, null=True)
 
     class Meta:
-        managed = False
+        managed = True
         db_table = 'staff'
         unique_together = (('idstaff', 'position', 'organization'),)
 

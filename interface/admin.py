@@ -4,6 +4,9 @@ from django.utils.safestring import mark_safe
 
 from . import models as m
 
+# admin.site.site_title = 'Поле администратора'
+admin.site.site_header = 'Поле администратора'
+
 
 @admin.register(m.Staff)
 class StaffAdmin(admin.ModelAdmin):
@@ -11,7 +14,7 @@ class StaffAdmin(admin.ModelAdmin):
 	list_display = ('last_name', 'name_patronamic')  # что видно о сотреднике не переходя на его страницу
 	search_fields = ('last_name', 'name_patronamic')  # по каким полям реализован поиск
 	readonly_fields = ('get_image', '_gender')
-	exclude = ['gender']
+	exclude = ['gender', 'photo', 'login', 'pass_field', 'user']
 
 	def get_image(self, obj):
 		return mark_safe(f'<img src={obj.photo} width="120" height="140"')
@@ -29,7 +32,7 @@ class StaffAdmin(admin.ModelAdmin):
 		return True
 
 
-@admin.register(m.Passport)
+# @admin.register(m.Passport) # регистрация поля в админке не нужна если нужно видеть паспорт только в поле клиента
 class PassportAdmin(admin.ModelAdmin):
 
 	def has_add_permission(self, request):
@@ -84,8 +87,8 @@ class ManagerAdminArea(admin.AdminSite):  # окружение менеджер�
 
 
 # admin.site.register(m.Staff, AdminPerms)
-# admin.site.unregister(Group)
-# admin.site.unregister(User)
+admin.site.unregister(Group)
+admin.site.unregister(User)
 manager_site = ManagerAdminArea(name='ManagerAdmin')
 # manager_site.register(m.Staff)
 # admin.site.register(m.City)
