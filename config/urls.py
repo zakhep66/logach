@@ -18,7 +18,7 @@ from django.urls import path, include
 from interface.admin import manager_site
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
+    path('/', admin.site.urls),
     path('manager/', manager_site.urls),
     path('accounts/', include('django.contrib.auth.urls')),
     # path('agent/', manager_site.urls),
