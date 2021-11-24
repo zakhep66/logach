@@ -25,4 +25,4 @@ urlpatterns = [
     path('accounts/', include('django.contrib.auth.urls')),
     # path('agent/', manager_site.urls),
     # path('accountant/', manager_site.urls),
-] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+]
