@@ -87,8 +87,8 @@ class ManagerAdminArea(admin.AdminSite):  # окружение менеджер�
 
 
 # admin.site.register(m.Staff, AdminPerms)
-# admin.site.unregister(Group)
-# admin.site.unregister(User)
+admin.site.unregister(Group)
+admin.site.unregister(User)
 manager_site = ManagerAdminArea(name='ManagerAdmin')
 # manager_site.register(m.Staff)
 # admin.site.register(m.City)
