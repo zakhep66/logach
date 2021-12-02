@@ -9,7 +9,7 @@ from . import models as m
 
 class StaffAdminForm(ModelForm):
 
-	MIN_RES = (400, 400)
+	MIN_RES = (4000, 4000)
 
 	def __init__(self, *args, **kwargs):
 		super().__init__(*args, **kwargs)
@@ -17,14 +17,14 @@ class StaffAdminForm(ModelForm):
 			*self.MIN_RES
 		)
 
-	# def clean_image(self):  # проверка на разрешение заливаемой картинки
-	# 	image = self.cleaned_data['photo']
-	# 	img = Image.open(image)
-	# 	print(img.width, img.height)
-	# 	min_height, min_width = self.MIN_RES
-	# 	if img.height < min_height or img.width < min_width:
-	# 		raise ValidationError('разрешение картинки меньше минимального')
-	# 	return image
+	def clean_image(self):  # проверка на разрешение заливаемой картинки
+		image = self.cleaned_data['image']
+		img = Image.open(image)
+		# print(img.width, img.height)
+		min_height, min_width = self.MIN_RES
+		if img.height < min_height or img.width < min_width:
+			raise ValidationError('разрешение картинки меньше минимального')
+		return image
 
 
 @admin.register(m.Staff)
