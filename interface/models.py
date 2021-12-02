@@ -7,6 +7,7 @@
 # Feel free to rename the models, but don't rename db_table values or field names.
 from django.contrib.auth.models import User
 from django.db import models
+from django.utils.safestring import mark_safe
 
 
 class AuthGroup(models.Model):
@@ -376,15 +377,15 @@ class PreliminaryAgreement(models.Model):
 
 class Staff(models.Model):
     idstaff = models.AutoField(primary_key=True)
-    position = models.ForeignKey(Position, models.DO_NOTHING, db_column='position', verbose_name="должность")
-    organization = models.ForeignKey(Organization, models.DO_NOTHING, db_column='organization', verbose_name="организация")
+    position = models.ForeignKey('Position', models.DO_NOTHING, db_column='position', verbose_name="должность", default='1')
+    organization = models.ForeignKey('Organization', models.DO_NOTHING, db_column='organization', verbose_name="организация", default='1')
     login = models.CharField(max_length=45, blank=True, null=True)
     pass_field = models.CharField(db_column='pass', max_length=45, blank=True, null=True)  # Field renamed because it was a Python reserved word.
     last_name = models.CharField(max_length=45, verbose_name="Фамилия")
     name_patronamic = models.CharField(max_length=45, verbose_name="Имя Отчество")
     gender = models.IntegerField(verbose_name="пол")
     date_of_birth = models.DateField(blank=True, null=True, verbose_name="дата рождения")
-    photo = models.CharField(max_length=255, blank=True, null=True, verbose_name="фото")
+    photo = models.ImageField(blank=True, null=True, verbose_name="фото", upload_to='photo')
     user = models.OneToOneField(AuthUser, models.CASCADE, db_column='user', blank=True, null=True)
 
     class Meta:
@@ -399,6 +400,9 @@ class Staff(models.Model):
         if self.gender == 1:
             return 'мужской'
         return 'женский'
+
+    def get_image(self):
+        return mark_safe(f'<img src={self.photo.url} width="auto" height="140">')
 
 
 class StatusClient(models.Model):

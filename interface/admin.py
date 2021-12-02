@@ -1,23 +1,41 @@
+from django import forms
 from django.contrib import admin
 from django.contrib.auth.models import Group, User
-from django.utils.safestring import mark_safe
+from django.forms import ModelForm, ValidationError
+from PIL import Image
 
 from . import models as m
 
-# admin.site.site_title = 'Поле администратора'
-admin.site.site_header = 'Поле администратора'
+
+class StaffAdminForm(ModelForm):
+
+	MIN_RES = (4000, 4000)
+
+	def __init__(self, *args, **kwargs):
+		super().__init__(*args, **kwargs)
+		self.fields['photo'].help_text = 'загрузите фотографию с разнишением не ниже {} на {}'.format(
+			*self.MIN_RES
+		)
+
+	# def clean_image(self):  # проверка на разрешение заливаемой картинки
+	# 	image = self.cleaned_data['photo']
+	# 	img = Image.open(image)
+	# 	print(img.width, img.height)
+	# 	min_height, min_width = self.MIN_RES
+	# 	if img.height < min_height or img.width < min_width:
+	# 		raise ValidationError('разрешение картинки меньше минимального')
+	# 	return image
 
 
 @admin.register(m.Staff)
 class StaffAdmin(admin.ModelAdmin):
 	"""Сотрудники"""
-	list_display = ('last_name', 'name_patronamic')  # что видно о сотреднике не переходя на его страницу
+	list_display = ('last_name', 'name_patronamic')  # что видно о сотруднике не переходя на его страницу
 	search_fields = ('last_name', 'name_patronamic')  # по каким полям реализован поиск
-	readonly_fields = ('get_image', '_gender')
-	exclude = ['gender', 'photo', 'login', 'pass_field', 'user']
+	readonly_fields = ('get_image',)
+	exclude = ['gender', 'login', 'pass_field', 'user']
 
-	def get_image(self, obj):
-		return mark_safe(f'<img src={obj.photo} width="120" height="140"')
+	form = StaffAdminForm
 
 	def has_add_permission(self, request):
 		return True
@@ -86,7 +104,7 @@ class ManagerAdminArea(admin.AdminSite):  # окружение менеджер�
 	site_header = 'Manager'  # надпись в хедере главной страницы и при авторизации
 
 
-# admin.site.register(m.Staff, AdminPerms)
+# admin.site.register(m.Staff, StaffAdmin)
 admin.site.unregister(Group)
 admin.site.unregister(User)
 manager_site = ManagerAdminArea(name='ManagerAdmin')
