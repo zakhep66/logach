@@ -385,7 +385,7 @@ class Staff(models.Model):
     name_patronamic = models.CharField(max_length=45, verbose_name="Имя Отчество")
     gender = models.IntegerField(verbose_name="пол")
     date_of_birth = models.DateField(blank=True, null=True, verbose_name="дата рождения")
-    photo = models.ImageField(blank=True, null=True, verbose_name="фото", upload_to='photo')
+    photo = models.ImageField(blank=True, null=True, verbose_name="фото")
     user = models.OneToOneField(AuthUser, models.CASCADE, db_column='user', blank=True, null=True)
 
     class Meta:

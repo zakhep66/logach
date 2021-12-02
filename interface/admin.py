@@ -9,7 +9,7 @@ from . import models as m
 
 class StaffAdminForm(ModelForm):
 
-	MIN_RES = (4000, 4000)
+	MIN_RES = (400, 400)
 
 	def __init__(self, *args, **kwargs):
 		super().__init__(*args, **kwargs)
