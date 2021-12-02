@@ -13,6 +13,13 @@ USER_GENDER = (
     (0, 'женский'),
 )
 
+USER_PERM = (
+    ('super_group', 'super_group'),
+    ('manager', 'manager'),
+    ('agent', 'agent'),
+    ('accountant', 'accountant'),
+)
+
 
 class AuthGroup(models.Model):
     name = models.CharField(unique=True, max_length=150)
