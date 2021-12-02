@@ -5,9 +5,13 @@
 #   * Make sure each ForeignKey and OneToOneField has `on_delete` set to the desired behavior
 #   * Remove `managed = False` lines if you wish to allow Django to create, modify, and delete the table
 # Feel free to rename the models, but don't rename db_table values or field names.
-from django.contrib.auth.models import User
 from django.db import models
-from django.utils.safestring import mark_safe
+
+
+USER_GENDER = (
+    (1, 'мужской'),
+    (0, 'женский'),
+)
 
 
 class AuthGroup(models.Model):
@@ -46,7 +50,7 @@ class AuthUser(models.Model):
     is_superuser = models.IntegerField()
     username = models.CharField(unique=True, max_length=150)
     first_name = models.CharField(max_length=150)
-    last_name = models.CharField(max_length=150)
+    last_name = models.OneToOneField('Staff', on_delete=models.CASCADE)
     email = models.CharField(max_length=254)
     is_staff = models.IntegerField()
     is_active = models.IntegerField()
@@ -57,7 +61,7 @@ class AuthUser(models.Model):
         db_table = 'auth_user'
 
     def __str__(self):
-        return self.username
+        return self.last_name
 
 
 class AuthUserGroups(models.Model):
@@ -132,7 +136,7 @@ class Client(models.Model):
     last_name = models.CharField(max_length=45, verbose_name="фамилия")
     name_patronymic = models.CharField(max_length=100, verbose_name="имя отчество")
     date_of_birtch = models.DateField(verbose_name="дата рождения")
-    gender = models.IntegerField(verbose_name="пол")
+    gender = models.IntegerField(verbose_name="пол", choices=USER_GENDER)
 
     class Meta:
         managed = False
@@ -141,11 +145,6 @@ class Client(models.Model):
 
     def __str__(self):
         return f"ФИО клиента: {self.last_name} {self.name_patronymic}"
-
-    def _gender(self):
-        if self.gender == 1:
-            return 'мужской'
-        return 'женский'
 
 
 class Contract(models.Model):
@@ -303,17 +302,12 @@ class Passport(models.Model):
     last_name = models.CharField(max_length=45, verbose_name="фамилия")
     first_name = models.CharField(max_length=45, verbose_name="имя")
     patronamic = models.CharField(max_length=45, blank=True, null=True, verbose_name="отчество")
-    gender = models.IntegerField(verbose_name="пол")
+    gender = models.IntegerField(verbose_name="пол", choices=USER_GENDER)
 
     class Meta:
         managed = False
         db_table = 'passport'
         unique_together = (('serial_number', 'client'),)
-
-    def _gender(self):
-        if self.gender == 1:
-            return 'мужской'
-        return 'женский'
 
     def __str__(self):
         return f"{self.last_name} {self.first_name} {self.patronamic}"
@@ -376,11 +370,6 @@ class PreliminaryAgreement(models.Model):
 
 
 class Staff(models.Model):
-    USER_GENDER = (
-        (1, 'мужской'),
-        (0, 'женский'),
-    )
-
     idstaff = models.AutoField(primary_key=True)
     position = models.ForeignKey('Position', models.DO_NOTHING, db_column='position', verbose_name="должность", default='1')
     organization = models.ForeignKey('Organization', models.DO_NOTHING, db_column='organization', verbose_name="организация", default='1')
@@ -391,7 +380,7 @@ class Staff(models.Model):
     gender = models.IntegerField(verbose_name="пол", choices=USER_GENDER)
     date_of_birth = models.DateField(blank=True, null=True, verbose_name="дата рождения")
     photo = models.ImageField(blank=True, null=True, verbose_name="фото")
-    user = models.OneToOneField(AuthUser, models.CASCADE, db_column='user', blank=True, null=True)
+    user = models.OneToOneField('AuthUser', models.CASCADE, db_column='user', blank=True, null=True)
 
     class Meta:
         managed = True

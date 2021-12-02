@@ -1,8 +1,8 @@
-from django import forms
+# from django import forms  # для работы с формами
 from django.contrib import admin
 from django.contrib.auth.models import Group, User
-from django.forms import ModelForm, ValidationError
-from PIL import Image
+# from django.forms import ModelForm, ValidationError  # для вывода ошибки
+# from PIL import Image  # для работы с картинками
 from django.utils.safestring import mark_safe
 
 from . import models as m
@@ -10,7 +10,7 @@ from . import models as m
 
 # class StaffAdminForm(ModelForm):
 #
-# 	MIN_RES = (4000, 4000)
+# 	MIN_RES = (4000, 4000)  # минимальное разрешение
 #
 # 	def __init__(self, *args, **kwargs):
 # 		super().__init__(*args, **kwargs)
@@ -19,9 +19,9 @@ from . import models as m
 # 		)
 #
 # 	def clean_image(self):  # проверка на разрешение заливаемой картинки
-# 		image = self.cleaned_data['image']
+# 		image = self.cleaned_data['photo']
 # 		img = Image.open(image)
-# 		# print(img.width, img.height)
+# 		print(img.width, img.height)
 # 		min_height, min_width = self.MIN_RES
 # 		if img.height < min_height or img.width < min_width:
 # 			raise ValidationError('разрешение картинки меньше минимального')
@@ -72,8 +72,6 @@ class PassportAdmin(admin.ModelAdmin):
 
 class PassportInline(admin.StackedInline):
 	model = m.Passport
-	readonly_fields = ('_gender',)
-	exclude = ['gender']
 
 	def get_extra(self, request, obj=None, **kwargs):
 		extra = 0
@@ -85,8 +83,6 @@ class ClientAdmin(admin.ModelAdmin):
 	"""Клиенты"""
 	list_display = ['last_name', 'name_patronymic']  # что видно о клиенте не переходя на его страницу
 	search_fields = ('last_name', 'name_patronymic')  # по каким полям реализован поиск
-	readonly_fields = ('_gender',)
-	exclude = ['gender']
 	inlines = [
 		PassportInline,
 	]
@@ -104,15 +100,9 @@ class ClientAdmin(admin.ModelAdmin):
 		return True
 
 
-class ManagerAdminArea(admin.AdminSite):  # окружение менеджера
-	site_header = 'Manager'  # надпись в хедере главной страницы и при авторизации
-
-
 # admin.site.register(m.Staff, StaffAdmin)
-admin.site.unregister(Group)
-admin.site.unregister(User)
-manager_site = ManagerAdminArea(name='ManagerAdmin')
-# manager_site.register(m.Staff)
+# admin.site.unregister(Group)
+# admin.site.unregister(User)
 # admin.site.register(m.City)
 # admin.site.register(m.Currency)
 # admin.site.register(m.Hotel)
