@@ -8,24 +8,24 @@ from django.utils.safestring import mark_safe
 from . import models as m
 
 
-class StaffAdminForm(ModelForm):
-
-	MIN_RES = (4000, 4000)
-
-	def __init__(self, *args, **kwargs):
-		super().__init__(*args, **kwargs)
-		self.fields['photo'].help_text = 'загрузите фотографию с разнишением не ниже {} на {}'.format(
-			*self.MIN_RES
-		)
-
-	def clean_image(self):  # проверка на разрешение заливаемой картинки
-		image = self.cleaned_data['image']
-		img = Image.open(image)
-		# print(img.width, img.height)
-		min_height, min_width = self.MIN_RES
-		if img.height < min_height or img.width < min_width:
-			raise ValidationError('разрешение картинки меньше минимального')
-		return image
+# class StaffAdminForm(ModelForm):
+#
+# 	MIN_RES = (4000, 4000)
+#
+# 	def __init__(self, *args, **kwargs):
+# 		super().__init__(*args, **kwargs)
+# 		self.fields['photo'].help_text = 'загрузите фотографию с разнишением не ниже {} на {}'.format(
+# 			*self.MIN_RES
+# 		)
+#
+# 	def clean_image(self):  # проверка на разрешение заливаемой картинки
+# 		image = self.cleaned_data['image']
+# 		img = Image.open(image)
+# 		# print(img.width, img.height)
+# 		min_height, min_width = self.MIN_RES
+# 		if img.height < min_height or img.width < min_width:
+# 			raise ValidationError('разрешение картинки меньше минимального')
+# 		return image
 
 
 @admin.register(m.Staff)
@@ -39,7 +39,7 @@ class StaffAdmin(admin.ModelAdmin):
 	def get_photo(self, obj):
 		return mark_safe(f'<img src={obj.photo.url} width="auto" height="140"')
 
-	form = StaffAdminForm
+	# form = StaffAdminForm
 
 	def has_add_permission(self, request):
 		return True
