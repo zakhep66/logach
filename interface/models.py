@@ -376,6 +376,11 @@ class PreliminaryAgreement(models.Model):
 
 
 class Staff(models.Model):
+    USER_GENDER = (
+        (1, 'мужской'),
+        (0, 'женский'),
+    )
+
     idstaff = models.AutoField(primary_key=True)
     position = models.ForeignKey('Position', models.DO_NOTHING, db_column='position', verbose_name="должность", default='1')
     organization = models.ForeignKey('Organization', models.DO_NOTHING, db_column='organization', verbose_name="организация", default='1')
@@ -383,7 +388,7 @@ class Staff(models.Model):
     pass_field = models.CharField(db_column='pass', max_length=45, blank=True, null=True)  # Field renamed because it was a Python reserved word.
     last_name = models.CharField(max_length=45, verbose_name="Фамилия")
     name_patronamic = models.CharField(max_length=45, verbose_name="Имя Отчество")
-    gender = models.IntegerField(verbose_name="пол")
+    gender = models.IntegerField(verbose_name="пол", choices=USER_GENDER)
     date_of_birth = models.DateField(blank=True, null=True, verbose_name="дата рождения")
     photo = models.ImageField(blank=True, null=True, verbose_name="фото")
     user = models.OneToOneField(AuthUser, models.CASCADE, db_column='user', blank=True, null=True)
@@ -395,14 +400,6 @@ class Staff(models.Model):
 
     def __str__(self):
         return f'{self.last_name} {self.name_patronamic}'
-
-    def _gender(self):
-        if self.gender == 1:
-            return 'мужской'
-        return 'женский'
-
-    def get_image(self):
-        return mark_safe(f'<img src={self.photo.url} width="auto" height="140">')
 
 
 class StatusClient(models.Model):

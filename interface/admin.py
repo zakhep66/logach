@@ -3,6 +3,7 @@ from django.contrib import admin
 from django.contrib.auth.models import Group, User
 from django.forms import ModelForm, ValidationError
 from PIL import Image
+from django.utils.safestring import mark_safe
 
 from . import models as m
 
@@ -32,8 +33,11 @@ class StaffAdmin(admin.ModelAdmin):
 	"""Сотрудники"""
 	list_display = ('last_name', 'name_patronamic')  # что видно о сотруднике не переходя на его страницу
 	search_fields = ('last_name', 'name_patronamic')  # по каким полям реализован поиск
-	readonly_fields = ('get_image',)
-	exclude = ['gender', 'login', 'pass_field', 'user']
+	readonly_fields = ('get_photo',)
+	exclude = ['login', 'pass_field', 'user']
+
+	def get_photo(self, obj):
+		return mark_safe(f'<img src={obj.photo.url} width="auto" height="140"')
 
 	form = StaffAdminForm
 
