@@ -8,26 +8,6 @@ from django.utils.safestring import mark_safe
 from . import models as m
 
 
-# class StaffAdminForm(ModelForm):
-#
-# 	MIN_RES = (4000, 4000)  # минимальное разрешение
-#
-# 	def __init__(self, *args, **kwargs):
-# 		super().__init__(*args, **kwargs)
-# 		self.fields['photo'].help_text = 'загрузите фотографию с разнишением не ниже {} на {}'.format(
-# 			*self.MIN_RES
-# 		)
-#
-# 	def clean_image(self):  # проверка на разрешение заливаемой картинки
-# 		image = self.cleaned_data['photo']
-# 		img = Image.open(image)
-# 		print(img.width, img.height)
-# 		min_height, min_width = self.MIN_RES
-# 		if img.height < min_height or img.width < min_width:
-# 			raise ValidationError('разрешение картинки меньше минимального')
-# 		return image
-
-
 @admin.register(m.Staff)
 class StaffAdmin(admin.ModelAdmin):
 	"""Сотрудники"""
