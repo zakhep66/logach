@@ -5,6 +5,7 @@
 #   * Make sure each ForeignKey and OneToOneField has `on_delete` set to the desired behavior
 #   * Remove `managed = False` lines if you wish to allow Django to create, modify, and delete the table
 # Feel free to rename the models, but don't rename db_table values or field names.
+from django.core.exceptions import ValidationError
 from django.db import models
 
 
@@ -136,6 +137,9 @@ class City(models.Model):
         db_table = 'city'
         unique_together = (('idcity', 'country'),)
 
+    def __str__(self):
+        return self.city_name
+
 
 class Client(models.Model):
     idclient = models.AutoField(primary_key=True)
@@ -146,21 +150,25 @@ class Client(models.Model):
     gender = models.IntegerField(verbose_name="пол", choices=USER_GENDER)
 
     class Meta:
+        verbose_name = "Клиент"
+        verbose_name_plural = "Клиенты"
         managed = False
         db_table = 'client'
         unique_together = (('idclient', 'status'),)
 
     def __str__(self):
-        return f"ФИО клиента: {self.last_name} {self.name_patronymic}"
+        return f"{self.last_name} {self.name_patronymic}"
 
 
 class Contract(models.Model):
     idcontract = models.AutoField(db_column='idContract', primary_key=True)  # Field name made lowercase.
-    currency = models.ForeignKey('Currency', models.DO_NOTHING, db_column='currency')
-    date_of_signing = models.DateField()
-    sum = models.CharField(max_length=10)
+    currency = models.ForeignKey('Currency', models.DO_NOTHING, db_column='currency', verbose_name="Валюта")
+    date_of_signing = models.DateField(verbose_name="Дата подписания")
+    sum = models.CharField(max_length=10, verbose_name="Сумма")
 
     class Meta:
+        verbose_name = "Договор"
+        verbose_name_plural = "Договора"
         managed = False
         db_table = 'contract'
         unique_together = (('idcontract', 'currency'),)
@@ -187,11 +195,14 @@ class Country(models.Model):
 
 class Currency(models.Model):
     idcurrency = models.AutoField(db_column='idCurrency', primary_key=True)  # Field name made lowercase.
-    code = models.CharField(max_length=45)
-    rate = models.CharField(max_length=45)
-    update_date = models.DateField()
+    name_currency = models.CharField(max_length=30, verbose_name="Наименование валюты")
+    code = models.CharField(max_length=45, verbose_name="Код валюты")
+    rate = models.CharField(max_length=45, verbose_name="Курс")
+    update_date = models.DateField(verbose_name="Дата обновления курса валют")
 
     class Meta:
+        verbose_name = "Договор"
+        verbose_name_plural = "Договора"
         managed = False
         db_table = 'currency'
 
@@ -243,15 +254,18 @@ class DjangoSession(models.Model):
 
 class Hotel(models.Model):
     idhotel = models.AutoField(db_column='idHotel', primary_key=True)  # Field name made lowercase.
-    city = models.ForeignKey(City, models.DO_NOTHING, db_column='city')
-    hotel_category = models.ForeignKey('HotelCategory', models.DO_NOTHING, db_column='hotel_category')
-    hotel = models.CharField(max_length=45)
-    address = models.CharField(max_length=100)
+    city = models.ForeignKey(City, models.DO_NOTHING, db_column='city', verbose_name="Город")
+    hotel_category = models.ForeignKey('HotelCategory', models.DO_NOTHING, db_column='hotel_category', verbose_name="Категория отеля")
+    hotel = models.CharField(max_length=45, verbose_name="Отель")
+    address = models.CharField(max_length=100, verbose_name="Адрес")
 
     class Meta:
         managed = False
         db_table = 'hotel'
         unique_together = (('idhotel', 'city', 'hotel_category'),)
+
+    def __str__(self):
+        return self.hotel
 
 
 class HotelCategory(models.Model):
@@ -334,17 +348,20 @@ class Payment(models.Model):
 
 class PlaceOfStay(models.Model):
     idplace_of_stay = models.AutoField(primary_key=True)
-    hotel = models.ForeignKey(Hotel, models.DO_NOTHING, db_column='hotel')
-    preliminary_agreement = models.ForeignKey('PreliminaryAgreement', models.DO_NOTHING, db_column='preliminary_agreement')
-    type_of_food = models.ForeignKey('TypeOfFood', models.DO_NOTHING, db_column='type_of_food')
-    type_of_room = models.ForeignKey('TypeOfRoom', models.DO_NOTHING, db_column='type_of_room')
-    start_of_trip = models.DateField()
-    finish_of_trip = models.DateField()
+    hotel = models.ForeignKey(Hotel, models.DO_NOTHING, db_column='hotel', verbose_name="Отель")
+    preliminary_agreement = models.ForeignKey('PreliminaryAgreement', models.DO_NOTHING, db_column='preliminary_agreement', verbose_name="Предварительное соглашение")
+    type_of_food = models.ForeignKey('TypeOfFood', models.DO_NOTHING, db_column='type_of_food', verbose_name="Тип питания")
+    type_of_room = models.ForeignKey('TypeOfRoom', models.DO_NOTHING, db_column='type_of_room', verbose_name="Тип комнаты")
+    start_of_trip = models.DateField(verbose_name="Дата въезда")
+    finish_of_trip = models.DateField(verbose_name="Дата выезда")
 
     class Meta:
         managed = False
         db_table = 'place_of_stay'
         unique_together = (('idplace_of_stay', 'hotel', 'preliminary_agreement', 'type_of_food', 'type_of_room'),)
+
+    def __str__(self):
+        return "Место прибывания"
 
 
 class Position(models.Model):
@@ -362,18 +379,27 @@ class Position(models.Model):
 
 class PreliminaryAgreement(models.Model):
     idpreliminary_agreement = models.AutoField(primary_key=True)
-    organization = models.ForeignKey(Organization, models.DO_NOTHING, db_column='organization')
-    staff = models.ForeignKey('Staff', models.DO_NOTHING, db_column='staff')
-    client = models.ForeignKey(Client, models.DO_NOTHING, db_column='client')
-    date = models.DateField()
-    start_of_trip = models.DateField()
-    finish_of_trip = models.DateField()
-    number_of_participants = models.IntegerField()
+    organization = models.ForeignKey(Organization, models.DO_NOTHING, db_column='organization', verbose_name="Организация")
+    staff = models.ForeignKey('Staff', models.DO_NOTHING, db_column='staff', verbose_name="Сотрудник")
+    client = models.ForeignKey(Client, models.DO_NOTHING, db_column='client', verbose_name="Клиент")
+    date = models.DateField(verbose_name="Дата оформления")
+    start_of_trip = models.DateField(verbose_name="Дата начала поездки")
+    finish_of_trip = models.DateField(verbose_name="Дада окончания поездки")
+    number_of_participants = models.IntegerField(verbose_name="Количество участников")
 
     class Meta:
+        verbose_name = "Предварительное соглашение"
+        verbose_name_plural = "Предварительные соглашения"
         managed = False
         db_table = 'preliminary_agreement'
         unique_together = (('idpreliminary_agreement', 'organization', 'staff', 'client'),)
+
+    def clean(self):
+        if self.staff.organization != self.organization:
+            raise ValidationError(('Неверно указана организация'))
+
+    def __str__(self):
+        return f'Предварительное соглашение с {self.client}'
 
 
 class Staff(models.Model):
@@ -390,6 +416,8 @@ class Staff(models.Model):
     user = models.OneToOneField('AuthUser', models.CASCADE, db_column='user', blank=True, null=True)
 
     class Meta:
+        verbose_name = "Сотрудник"
+        verbose_name_plural = "Сотрудники"
         managed = True
         db_table = 'staff'
         unique_together = (('idstaff', 'position', 'organization'),)
