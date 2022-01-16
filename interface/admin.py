@@ -1,31 +1,45 @@
-from django import forms
+from django import forms  # для работы с формами
 from django.contrib import admin
+import nested_admin
 from django.contrib.auth.models import Group, User
-from django.forms import ModelForm, ValidationError
-from PIL import Image
+# from django.forms import ModelForm, ValidationError  # для вывода ошибки
+# from PIL import Image  # для работы с картинками
 from django.utils.safestring import mark_safe
 
 from . import models as m
 
+admin.site.register(m.PlaceOfStay)
+admin.site.register(m.PreliminaryAgreement)
+admin.site.register(m.StatusClient)
+admin.site.register(m.HotelCategory)
+# admin.site.register(m.Country)
 
-# class StaffAdminForm(ModelForm):
-#
-# 	MIN_RES = (4000, 4000)
-#
-# 	def __init__(self, *args, **kwargs):
-# 		super().__init__(*args, **kwargs)
-# 		self.fields['photo'].help_text = 'загрузите фотографию с разнишением не ниже {} на {}'.format(
-# 			*self.MIN_RES
-# 		)
-#
-# 	def clean_image(self):  # проверка на разрешение заливаемой картинки
-# 		image = self.cleaned_data['image']
-# 		img = Image.open(image)
-# 		# print(img.width, img.height)
-# 		min_height, min_width = self.MIN_RES
-# 		if img.height < min_height or img.width < min_width:
-# 			raise ValidationError('разрешение картинки меньше минимального')
-# 		return image
+
+# class PlaceOfStayInline(nested_admin.NestedStackedInline):
+# 	extra = 0
+# 	model = m.PlaceOfStay
+
+
+# class HotelInline(nested_admin.NestedStackedInline):
+# 	model = m.Hotel
+# 	extra = 0
+# 	inlines = [PlaceOfStayInline]
+
+
+class CityInline(nested_admin.NestedTabularInline):
+	model = m.City
+	extra = 0
+	# inlines = [PlaceOfStayInline]
+
+
+@admin.register(m.Country)
+class CountryAdmin(nested_admin.NestedModelAdmin):
+	inlines = [CityInline]
+
+
+# @admin.register(m.PreliminaryAgreement)
+# class PreliminaryAgreementAdmin(nested_admin.NestedModelAdmin):
+# 	inlines = [PlaceOfStayInline]
 
 
 @admin.register(m.Staff)
@@ -72,12 +86,7 @@ class PassportAdmin(admin.ModelAdmin):
 
 class PassportInline(admin.StackedInline):
 	model = m.Passport
-	readonly_fields = ('_gender',)
-	exclude = ['gender']
-
-	def get_extra(self, request, obj=None, **kwargs):
-		extra = 0
-		return extra
+	extra = 0
 
 
 @admin.register(m.Client)
@@ -85,8 +94,6 @@ class ClientAdmin(admin.ModelAdmin):
 	"""Клиенты"""
 	list_display = ['last_name', 'name_patronymic']  # что видно о клиенте не переходя на его страницу
 	search_fields = ('last_name', 'name_patronymic')  # по каким полям реализован поиск
-	readonly_fields = ('_gender',)
-	exclude = ['gender']
 	inlines = [
 		PassportInline,
 	]
@@ -104,36 +111,11 @@ class ClientAdmin(admin.ModelAdmin):
 		return True
 
 
-class ManagerAdminArea(admin.AdminSite):  # окружение менеджера
-	site_header = 'Manager'  # надпись в хедере главной страницы и при авторизации
+@admin.register(m.Position)
+class PositionAdmin(admin.ModelAdmin):
+	list_display = ['description', 'position']
 
 
-# admin.site.register(m.Staff, StaffAdmin)
-admin.site.unregister(Group)
-admin.site.unregister(User)
-manager_site = ManagerAdminArea(name='ManagerAdmin')
-# manager_site.register(m.Staff)
-# admin.site.register(m.City)
-# admin.site.register(m.Currency)
-# admin.site.register(m.Hotel)
-# admin.site.register(m.BirthCertificate)
-# admin.site.register(m.BuisnessProcess)
-# admin.site.register(m.Client)
-# admin.site.register(m.Contract)
-# admin.site.register(m.ContractHasClient)
-# admin.site.register(m.Country)
-# admin.site.register(m.HotelCategory)
-# admin.site.register(m.InternationalPassport)
-# admin.site.register(m.Organization)
-# admin.site.register(m.Passport)
-# admin.site.register(m.Payment)
-# admin.site.register(m.PlaceOfStay)
-# admin.site.register(m.Position)
-# admin.site.register(m.PreliminaryAgreement)
-# admin.site.register(m.Staff, StaffAdmin)
-# admin.site.register(m.StatusClient)
-# admin.site.register(m.StatusProcess)
-# admin.site.register(m.Ticket)
-# admin.site.register(m.Transport)
-# admin.site.register(m.TypeOfFood)
-# admin.site.register(m.TypeOfRoom)
+@admin.register(m.Organization)
+class PositionAdmin(admin.ModelAdmin):
+	pass

@@ -14,19 +14,22 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
+from django.contrib.auth.views import LogoutView
 from django.urls import path, include
-from interface.admin import manager_site
+# from interface.admin import manager_site
 from django.conf import settings
 from django.conf.urls import url
 from django.views.static import serve
 
+from interface.views import Login
 
 urlpatterns = [
     url(r'^media/(?P<path>.*)$', serve, {'document_root': settings.MEDIA_ROOT}),
     url(r'^static/(?P<path>.*)$', serve, {'document_root': settings.STATIC_ROOT}),
-    path('', admin.site.urls),
-    path('manager/', manager_site.urls),
+    path('admin/', admin.site.urls),
+    path('', include('interface.urls')),
     path('accounts/', include('django.contrib.auth.urls')),
-    # path('agent/', manager_site.urls),
-    # path('accountant/', manager_site.urls),
+    path('login/', Login.as_view(), name="login"),
+    path('logout/', LogoutView.as_view(next_page="login"), name='logout'),
+    # url(r'^_nested_admin/', include('nested_admin.urls')),
 ]
