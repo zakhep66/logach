@@ -25,8 +25,10 @@ urlpatterns = [
     url(r'^static/(?P<path>.*)$', serve, {'document_root': settings.STATIC_ROOT}),
     path('admin/', admin.site.urls),
     path('accounts/', include('django.contrib.auth.urls')),
-    path('', include('interface.urls'))
+    path('', include('interface.urls')),
     # url(r'^chaining/', include('smart_selects.urls')),
     # path('agent/', manager_site.urls),
     # path('accountant/', manager_site.urls),
+    url(r'^_nested_admin/', include('nested_admin.urls')),
+    # path('jet_api/', include('jet_django.urls')), библиотека для создании админ панели
 ]

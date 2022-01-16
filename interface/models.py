@@ -162,7 +162,7 @@ class Client(models.Model):
 
 class Contract(models.Model):
     idcontract = models.AutoField(db_column='idContract', primary_key=True)  # Field name made lowercase.
-    currency = models.ForeignKey('Currency', models.DO_NOTHING, db_column='currency', verbose_name="Валюта")
+    currency = models.ForeignKey('Currency', models.DO_NOTHING, db_column='currency', verbose_name="Валюта", related_name="Валюта")
     date_of_signing = models.DateField(verbose_name="Дата подписания")
     sum = models.CharField(max_length=10, verbose_name="Сумма")
 
@@ -201,9 +201,9 @@ class Currency(models.Model):
     update_date = models.DateField(verbose_name="Дата обновления курса валют")
 
     class Meta:
-        verbose_name = "Договор"
-        verbose_name_plural = "Договора"
-        managed = False
+        verbose_name = "Валюта"
+        verbose_name_plural = "Валюты"
+        managed = True
         db_table = 'currency'
 
 
@@ -366,8 +366,8 @@ class PlaceOfStay(models.Model):
 
 class Position(models.Model):
     idposition = models.AutoField(primary_key=True)
-    position = models.CharField(max_length=45)
-    description = models.CharField(max_length=255)
+    position = models.CharField(max_length=45, null=True)
+    description = models.CharField(max_length=255, null=True)
 
     class Meta:
         managed = False

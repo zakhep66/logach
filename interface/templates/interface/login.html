@@ -1,0 +1,13 @@
+{% extends 'interface/base.html' %}
+{% block title %}
+Страница авторизации
+{% endblock %}
+{% block content %}
+    <div style="width: 20vw; margin: 12vh auto">
+        <form id="add_form" method="post">
+            {% csrf_token %}
+            {{ form }}
+            <button style="margin-top: 2vh" form="add_form" type="submit" class="btn btn-success">Добавить</button>
+        </form>
+    </div>
+{% endblock %}
