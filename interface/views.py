@@ -5,6 +5,7 @@ from django.contrib.auth.views import LoginView
 from django.db import transaction
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
+from django.views import View
 
 from .forms import *
 from .models import *
@@ -28,27 +29,27 @@ def index(request):
 	return render(request, 'interface/index.html', {'staff': staff})
 
 
-def staff(request, id):
-	error = ''
-	staff = Staff.objects.get(id=id)
-	if request.method == 'POST':
-		form_staff = StaffCreateForm(request.POST, instance=staff)
-		if form_staff.is_valid():
-			with transaction.atomic():
-				person = Staff.objects.get(id=id)
-				user = User.objects.get(id=person.user.id)
-				staff_instance = form_staff.save(commit=False)
-				staff_instance.user = user
-				staff_instance.save()
-			return redirect('employees')
-		else:
-			error = 'Форма заполнена некорректно'
-	user = User.objects.get(id=staff.user.id)
-	positions = Position.objects.all()
-	organizations = Organization.objects.all()
-	return render(request, 'interface/employee.html', {'staff': staff, 'positions': positions,
-	                                                   'organizations': organizations, 'user': user,
-	                                                   'error': error})
+# def staff(request, id):
+# 	error = ''
+# 	staff = Staff.objects.get(id=id)
+# 	if request.method == 'POST':
+# 		form_staff = StaffCreateForm(request.POST, instance=staff)
+# 		if form_staff.is_valid():
+# 			with transaction.atomic():
+# 				person = Staff.objects.get(id=id)
+# 				user = User.objects.get(id=person.user.id)
+# 				staff_instance = form_staff.save(commit=False)
+# 				staff_instance.user = user
+# 				staff_instance.save()
+# 			return redirect('staff')
+# 		else:
+# 			error = 'Форма заполнена некорректно'
+# 	user = User.objects.get(id=staff.user.id)
+# 	positions = Position.objects.all()
+# 	organizations = Organization.objects.all()
+# 	return render(request, 'interface/staff.html', {'staff': staff, 'positions': positions,
+# 	                                                'organizations': organizations, 'user': user,
+# 	                                                'error': error})
 
 
 def clients(request):
@@ -98,15 +99,36 @@ def clients(request):
 # 	return render(request, 'interface/create_staff.html',
 # 	              {'positions': positions, 'organizations': organizations, 'error': error, 'init': double})
 
-def create_staff(request):
-	if request.method == 'POST':
-		form = CreateStaffForm(requests.post)
+# def create_staff(request):
+# 	if request.method == 'POST':
+# 		form = CreateStaffForm(requests.post)
+# 		if form.is_valid():
+# 			try:
+# 				form.save()
+# 				return redirect('index')
+# 			except:
+# 				form.add_error(None, 'Ошибка добавления пользователя')
+#
+# 	if request.method == 'GET':
+# 		form = CreateStaffForm()
+# 		return render(request, 'interface/create_staff.html', {'form': form})
+
+
+class CreateStaff(View):
+	def get(self, request):
+		form = CreateStaffForm()
+		return render(request, 'interface/create_staff.html', {'form': form})
+
+	def post(self, request):
+		form = CreateStaffForm(request.POST)
 		if form.is_valid():
 			try:
 				form.save()
 				return redirect('index')
 			except:
 				form.add_error(None, 'Ошибка добавления пользователя')
-	else:
-		form = CreateStaffForm()
-	return render(request, 'interface/create_staff.html', {'form': form})
+
+
+class StaffsView(View):
+	def get(self, request):
+		return render(request, 'interface/staff.html', {''})

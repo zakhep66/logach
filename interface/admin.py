@@ -11,7 +11,6 @@ from . import models as m
 admin.site.register(m.PlaceOfStay)
 admin.site.register(m.PreliminaryAgreement)
 admin.site.register(m.StatusClient)
-admin.site.register(m.HotelCategory)
 # admin.site.register(m.Country)
 
 
@@ -119,3 +118,7 @@ class PositionAdmin(admin.ModelAdmin):
 @admin.register(m.Organization)
 class PositionAdmin(admin.ModelAdmin):
 	pass
+
+
+admin.site.register(m.Hotel)
+admin.site.register(m.HotelCategory)

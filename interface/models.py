@@ -143,6 +143,9 @@ class City(models.Model):
         # db_table = 'city'
         # unique_together = (('idcity', 'country'),)
 
+    def __str__(self):
+        return self.city_name
+
 
 class Client(models.Model):
     # idclient = models.AutoField(primary_key=True)
@@ -160,12 +163,7 @@ class Client(models.Model):
         # unique_together = (('idclient', 'status'),)
 
     def __str__(self):
-        return f"ФИО клиента: {self.last_name} {self.name_patronymic}"
-
-    def _gender(self):
-        if self.gender == 1:
-            return 'мужской'
-        return 'женский'
+        return f"{self.last_name} {self.name_patronymic}"
 
 
 class Contract(models.Model):
@@ -282,6 +280,9 @@ class Hotel(models.Model):
         # db_table = 'hotel'
         # unique_together = (('idhotel', 'city', 'hotel_category'),)
 
+    def __str__(self):
+        return self.hotel
+
 
 class HotelCategory(models.Model):
     # idhotel_category = models.AutoField(db_column='idHotel_category', primary_key=True)  # Field name made lowercase.
@@ -293,6 +294,9 @@ class HotelCategory(models.Model):
         verbose_name_plural = "Категории отелей"
         # managed = False
         # db_table = 'hotel_category'
+
+    def __str__(self):
+        return self.hotel_category
 
 
 class InternationalPassport(models.Model):
@@ -344,7 +348,7 @@ class Passport(models.Model):
     last_name = models.CharField(max_length=45, verbose_name="фамилия")
     first_name = models.CharField(max_length=45, verbose_name="имя")
     patronamic = models.CharField(max_length=45, blank=True, null=True, verbose_name="отчество")
-    gender = models.IntegerField(verbose_name="пол")
+    gender = models.IntegerField(verbose_name="пол", choices=USER_GENDER)
 
     class Meta:
         verbose_name = "Паспорт"
@@ -353,10 +357,6 @@ class Passport(models.Model):
         # db_table = 'passport'
         # unique_together = (('serial_number', 'client'),)
 
-    def _gender(self):
-        if self.gender == 1:
-            return 'мужской'
-        return 'женский'
 
     def __str__(self):
         return f"{self.last_name} {self.first_name} {self.patronamic}"
@@ -392,6 +392,9 @@ class PlaceOfStay(models.Model):
         # db_table = 'place_of_stay'
         # unique_together = (('idplace_of_stay', 'hotel', 'preliminary_agreement', 'type_of_food', 'type_of_room'),)
 
+    def __str__(self):
+        return f'{self.hotel}'
+
 
 class Position(models.Model):
     # idposition = models.AutoField(primary_key=True)
@@ -424,6 +427,9 @@ class PreliminaryAgreement(models.Model):
         # managed = False
         # db_table = 'preliminary_agreement'
         # unique_together = (('idpreliminary_agreement', 'organization', 'staff', 'client'),)
+
+    def __str__(self):
+        return f'Соглашение {self.client}'
 
 
 class Staff(models.Model):
@@ -514,6 +520,9 @@ class TypeOfFood(models.Model):
         # managed = False
         # db_table = 'type_of_food'
 
+    def __str__(self):
+        return self.type_of_food
+
 
 class TypeOfRoom(models.Model):
     # idtype_of_room = models.AutoField(primary_key=True)
@@ -525,6 +534,9 @@ class TypeOfRoom(models.Model):
         verbose_name_plural = "Типы комнат"
         # managed = False
         # db_table = 'type_of_room'
+
+    def __str__(self):
+        return self.type_of_room
 
 
 # class Visa(models.Model):
