@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'interface.apps.InterfaceConfig',
     'nested_admin',
+    'bootstrap_datepicker_plus',
 
 ]
 

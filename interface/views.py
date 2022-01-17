@@ -13,7 +13,9 @@ from .models import *
 class Login(LoginView):
 	template_name = "interface/login.html"
 	form_class = AuthUserForm
-	# success_url = reverse_lazy("employees")
+
+
+# success_url = reverse_lazy("employees")
 
 
 def index(request):
@@ -97,7 +99,7 @@ def clients(request):
 # 	              {'positions': positions, 'organizations': organizations, 'error': error, 'init': double})
 
 def create_staff(request):
-	if request.method == 'post':
+	if request.method == 'POST':
 		form = CreateStaffForm(requests.post)
 		if form.is_valid():
 			try:

@@ -10,47 +10,15 @@
         <h1 class="mb-4">Добавление сотрудника</h1>
         <div class="row">
             <div class="col-6">
-            {% if error != '' %}
-            <div class="alert alert-dismissible alert-danger">
-                <strong>{{ error }}</strong>
-                {{ form.non_form_errors }}
-            </div>
-            {% endif %}
+{#            {% if error != '' %}#}
+{#            <div class="alert alert-dismissible alert-danger">#}
+{#                <strong>{{ error }}</strong>#}
+{#                {{ form.non_form_errors }}#}
+{#            </div>#}
+{#            {% endif %}#}
                 <form method="post">
                     {% csrf_token %}
                     {{ form }}
-
-{#                    <label for="last_name"  class="form-label">Имя</label>#}
-{#                    <input type="text" placeholder="Фамилия" name="last_name" id="last_name" value="{{ init.last_name }}" required class="mb-3 form-control"><br>#}
-{#                    <label for="name_patronamic" class="form-label">ФИО</label>#}
-{#                    <input type="text" placeholder="ИО" name="name_patronamic" id="name_patronamic" value="{{ init.name_patronamic }}" required class="mb-3 form-control"><br>#}
-{#                    <label for="date_of_birth" class="form-label">Дата рождения</label>#}
-{#                    <input type="date" name="date_of_birth" id="date_of_birth" value="{{ init.date_of_birth|date:"Y-m-d" }}" class="mb-3 form-control"><br>#}
-{#                    {% if img_obj %}#}
-{#                      <h3>Succesfully uploaded : {{img_obj.title}}</h3>#}
-{#                      <img src="{{ img_obj.image.url}}" alt="connect" style="max-height:300px">#}
-{#                    {% endif %}#}
-{#                    <label for="position" class="form-label">Должность</label>#}
-{#                    <select class="form-select mb-3" id="position" name="position">#}
-{#                        {% for el in positions %}#}
-{#                            {% if el.name != "Администратор" %}#}
-{#                                <option {% if el == init.position %} selected {% endif %} value="{{ el.id }}">#}
-{#                                    {{ el.name }}#}
-{#                                </option>#}
-{#                            {% endif %}#}
-{#                        {% endfor %}#}
-{#                    </select>#}
-{#                    <label for="organization" class="form-label">Филиал</label>#}
-{#                    <select class="form-select mb-3" id="organization" name="organization">#}
-{#                        {% for el in organizations %}#}
-{#                            <option value="{{ el.id }}">#}
-{#                                {{ el.name }}#}
-{#                            </option>#}
-{#                        {% endfor %}#}
-{#                    </select>#}
-{#                    {% if error == 'Сотрудник с такими же данными уже существует. Выберите филиал и повторите отправку данных, если всё же хотите внести его в базу' %}#}
-{#                        <input type="hidden" name="double" value="no">#}
-{#                    {% endif %}#}
                     <button type="submit" class="btn btn-success">Добавить</button>
                 </form>
             </div>
