@@ -82,14 +82,21 @@ WSGI_APPLICATION = 'config.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.mysql',
+#         'NAME': 'std_1305_logach',
+#         'HOST': 'std-mysql',
+#         'USER': 'std_1305_logach',
+#         'PASSWORD': 'tester1234',
+#         'PORT': '3306',
+#     }
+# }
+
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'std_1305_logach',
-        'HOST': 'std-mysql',
-        'USER': 'std_1305_logach',
-        'PASSWORD': 'tester1234',
-        'PORT': '3306',
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
 
@@ -151,6 +158,6 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # JET_PROJECT = 'travaling'
 # JET_TOKEN = 'e4824cea-f4d4-45de-996e-5c5d6274ea6b' онлайн админ панель
 
-LOGIN_REDIRECT_URL = reverse_lazy('main_page')
-LOGIN_URL = reverse_lazy('login_page')
-LOGOUT_URL = reverse_lazy('logout_page')
+# LOGIN_REDIRECT_URL = reverse_lazy('main_page')
+# LOGIN_URL = reverse_lazy('login_page')
+# LOGOUT_URL = reverse_lazy('logout_page')

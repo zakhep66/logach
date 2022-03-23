@@ -12,9 +12,9 @@ from . import models as m
 class PlaceOfStayInline(nested_admin.NestedStackedInline):
 	model = m.PlaceOfStay
 	extra = 0
-	# inlines = [
-	# 	HotelInline,
-	# ]
+# inlines = [
+# 	HotelInline,
+# ]
 
 
 class HotelInline(nested_admin.NestedStackedInline):
@@ -85,7 +85,6 @@ class PassportInline(admin.StackedInline):
 	extra = 0
 
 
-
 @admin.register(m.Client)
 class ClientAdmin(admin.ModelAdmin):
 	"""Клиенты"""
@@ -106,7 +105,6 @@ class ClientAdmin(admin.ModelAdmin):
 
 	def has_change_permission(self, request, obj=None):
 		return True
-
 
 # class ContractForm(forms.ModelForm):
 # 	def __init__(self, *args, **kwargs):
@@ -136,17 +134,17 @@ class ClientAdmin(admin.ModelAdmin):
 # admin.site.register(m.Client)
 # admin.site.register(m.Contract)
 # admin.site.register(m.ContractHasClient)
-# admin.site.register(m.Country)
+admin.site.register(m.Country)
 # admin.site.register(m.HotelCategory)
 # admin.site.register(m.InternationalPassport)
-# admin.site.register(m.Organization)
-# admin.site.register(m.Passport)
+admin.site.register(m.Organization)
+admin.site.register(m.Passport)
 # admin.site.register(m.Payment)
-# admin.site.register(m.Position)
+admin.site.register(m.Position)
 # admin.site.register(m.PreliminaryAgreement)
 # admin.site.register(m.Staff, StaffAdmin)
-# admin.site.register(m.StatusClient)
-# admin.site.register(m.StatusProcess)
+admin.site.register(m.StatusClient)
+admin.site.register(m.StatusProcess)
 # admin.site.register(m.Ticket)
 # admin.site.register(m.Transport)
 # admin.site.register(m.TypeOfFood)

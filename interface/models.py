@@ -5,6 +5,7 @@
 #   * Make sure each ForeignKey and OneToOneField has `on_delete` set to the desired behavior
 #   * Remove `managed = False` lines if you wish to allow Django to create, modify, and delete the table
 # Feel free to rename the models, but don't rename db_table values or field names.
+from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.db import models
 
@@ -22,78 +23,6 @@ USER_PERM = (
 )
 
 
-class AuthGroup(models.Model):
-    name = models.CharField(unique=True, max_length=150)
-
-    class Meta:
-        managed = False
-        db_table = 'auth_group'
-
-
-class AuthGroupPermissions(models.Model):
-    id = models.BigAutoField(primary_key=True)
-    group = models.ForeignKey(AuthGroup, models.DO_NOTHING)
-    permission = models.ForeignKey('AuthPermission', models.DO_NOTHING)
-
-    class Meta:
-        managed = False
-        db_table = 'auth_group_permissions'
-        unique_together = (('group', 'permission'),)
-
-
-class AuthPermission(models.Model):
-    name = models.CharField(max_length=255)
-    content_type = models.ForeignKey('DjangoContentType', models.DO_NOTHING)
-    codename = models.CharField(max_length=100)
-
-    class Meta:
-        managed = False
-        db_table = 'auth_permission'
-        unique_together = (('content_type', 'codename'),)
-
-
-class AuthUser(models.Model):
-    password = models.CharField(max_length=128)
-    last_login = models.DateTimeField(blank=True, null=True)
-    is_superuser = models.IntegerField()
-    username = models.CharField(unique=True, max_length=150)
-    first_name = models.CharField(max_length=150)
-    last_name = models.OneToOneField('Staff', on_delete=models.CASCADE)
-    email = models.CharField(max_length=254)
-    is_staff = models.IntegerField()
-    is_active = models.IntegerField()
-    date_joined = models.DateTimeField()
-
-    class Meta:
-        managed = False
-        db_table = 'auth_user'
-
-    def __str__(self):
-        return self.last_name
-
-
-class AuthUserGroups(models.Model):
-    id = models.BigAutoField(primary_key=True)
-    user = models.ForeignKey(AuthUser, models.DO_NOTHING)
-    group = models.ForeignKey(AuthGroup, models.DO_NOTHING)
-
-    class Meta:
-        managed = False
-        db_table = 'auth_user_groups'
-        unique_together = (('user', 'group'),)
-
-
-class AuthUserUserPermissions(models.Model):
-    id = models.BigAutoField(primary_key=True)
-    user = models.ForeignKey(AuthUser, models.DO_NOTHING)
-    permission = models.ForeignKey(AuthPermission, models.DO_NOTHING)
-
-    class Meta:
-        managed = False
-        db_table = 'auth_user_user_permissions'
-        unique_together = (('user', 'permission'),)
-
-
 class BirthCertificate(models.Model):
     serial_number = models.CharField(primary_key=True, max_length=10)
     client = models.ForeignKey('Client', models.DO_NOTHING, db_column='client')
@@ -106,9 +35,7 @@ class BirthCertificate(models.Model):
     date_of_birth = models.CharField(max_length=45)
 
     class Meta:
-        managed = False
-        db_table = 'birth_certificate'
-        unique_together = (('serial_number', 'client'),)
+        verbose_name = 'Свидетельство о рождении'
 
 
 class BuisnessProcess(models.Model):
@@ -122,9 +49,7 @@ class BuisnessProcess(models.Model):
     update_date = models.DateField()
 
     class Meta:
-        managed = False
-        db_table = 'buisness_process'
-        unique_together = (('idbuisness_process', 'contract', 'ticket', 'status_process'),)
+        verbose_name = 'Бизнес процесс'
 
 
 class City(models.Model):
@@ -133,9 +58,7 @@ class City(models.Model):
     city_name = models.CharField(max_length=45)
 
     class Meta:
-        managed = False
-        db_table = 'city'
-        unique_together = (('idcity', 'country'),)
+        verbose_name = 'Город'
 
     def __str__(self):
         return self.city_name
@@ -152,9 +75,6 @@ class Client(models.Model):
     class Meta:
         verbose_name = "Клиент"
         verbose_name_plural = "Клиенты"
-        managed = False
-        db_table = 'client'
-        unique_together = (('idclient', 'status'),)
 
     def __str__(self):
         return f"{self.last_name} {self.name_patronymic}"
@@ -169,9 +89,6 @@ class Contract(models.Model):
     class Meta:
         verbose_name = "Договор"
         verbose_name_plural = "Договора"
-        managed = False
-        db_table = 'contract'
-        unique_together = (('idcontract', 'currency'),)
 
 
 class ContractHasClient(models.Model):
@@ -179,9 +96,7 @@ class ContractHasClient(models.Model):
     client = models.ForeignKey(Client, models.DO_NOTHING)
 
     class Meta:
-        managed = False
-        db_table = 'contract_has_client'
-        unique_together = (('contract', 'client'),)
+        verbose_name = 'ContractHasClient'
 
 
 class Country(models.Model):
@@ -189,8 +104,7 @@ class Country(models.Model):
     country = models.CharField(max_length=45)
 
     class Meta:
-        managed = False
-        db_table = 'country'
+        verbose_name = 'Страна'
 
 
 class Currency(models.Model):
@@ -203,54 +117,9 @@ class Currency(models.Model):
     class Meta:
         verbose_name = "Валюта"
         verbose_name_plural = "Валюты"
-        managed = True
-        db_table = 'currency'
 
-
-class DjangoAdminLog(models.Model):
-    action_time = models.DateTimeField()
-    object_id = models.TextField(blank=True, null=True)
-    object_repr = models.CharField(max_length=200)
-    action_flag = models.PositiveSmallIntegerField()
-    change_message = models.TextField()
-    content_type = models.ForeignKey('DjangoContentType', models.DO_NOTHING, blank=True, null=True)
-    user = models.ForeignKey(AuthUser, models.DO_NOTHING)
-
-    class Meta:
-        managed = False
-        db_table = 'django_admin_log'
-
-
-class DjangoContentType(models.Model):
-    app_label = models.CharField(max_length=100)
-    model = models.CharField(max_length=100)
-
-    class Meta:
-        managed = False
-        db_table = 'django_content_type'
-        unique_together = (('app_label', 'model'),)
-
-
-class DjangoMigrations(models.Model):
-    id = models.BigAutoField(primary_key=True)
-    app = models.CharField(max_length=255)
-    name = models.CharField(max_length=255)
-    applied = models.DateTimeField()
-
-    class Meta:
-        managed = False
-        db_table = 'django_migrations'
-
-
-class DjangoSession(models.Model):
-    session_key = models.CharField(primary_key=True, max_length=40)
-    session_data = models.TextField()
-    expire_date = models.DateTimeField()
-
-    class Meta:
-        managed = False
-        db_table = 'django_session'
-
+    def __str__(self):
+        return self.name_currency
 
 class Hotel(models.Model):
     idhotel = models.AutoField(db_column='idHotel', primary_key=True)  # Field name made lowercase.
@@ -260,9 +129,7 @@ class Hotel(models.Model):
     address = models.CharField(max_length=100, verbose_name="Адрес")
 
     class Meta:
-        managed = False
-        db_table = 'hotel'
-        unique_together = (('idhotel', 'city', 'hotel_category'),)
+        verbose_name = 'Отель'
 
     def __str__(self):
         return self.hotel
@@ -274,8 +141,7 @@ class HotelCategory(models.Model):
     description = models.CharField(max_length=100)
 
     class Meta:
-        managed = False
-        db_table = 'hotel_category'
+        verbose_name = 'Категория отеля'
 
 
 class InternationalPassport(models.Model):
@@ -292,9 +158,7 @@ class InternationalPassport(models.Model):
     date_of_birth = models.DateField()
 
     class Meta:
-        managed = False
-        db_table = 'international_passport'
-        unique_together = (('serial_number', 'client'),)
+        verbose_name = 'Загран паспорт'
 
 
 class Organization(models.Model):
@@ -305,8 +169,7 @@ class Organization(models.Model):
     email = models.CharField(max_length=100)
 
     class Meta:
-        managed = False
-        db_table = 'organization'
+        verbose_name = 'Организация'
 
     def __str__(self):
         return self.organization
@@ -326,9 +189,7 @@ class Passport(models.Model):
     gender = models.IntegerField(verbose_name="пол", choices=USER_GENDER)
 
     class Meta:
-        managed = False
-        db_table = 'passport'
-        unique_together = (('serial_number', 'client'),)
+        verbose_name = 'Паспорт'
 
     def __str__(self):
         return f"{self.last_name} {self.first_name} {self.patronamic}"
@@ -341,9 +202,7 @@ class Payment(models.Model):
     sum_in_rub = models.IntegerField()
 
     class Meta:
-        managed = False
-        db_table = 'payment'
-        unique_together = (('idpayment', 'organization'),)
+        verbose_name = 'Оплата'
 
 
 class PlaceOfStay(models.Model):
@@ -356,9 +215,7 @@ class PlaceOfStay(models.Model):
     finish_of_trip = models.DateField(verbose_name="Дата выезда")
 
     class Meta:
-        managed = False
-        db_table = 'place_of_stay'
-        unique_together = (('idplace_of_stay', 'hotel', 'preliminary_agreement', 'type_of_food', 'type_of_room'),)
+        verbose_name = 'Место остановки'
 
     def __str__(self):
         return "Место прибывания"
@@ -370,8 +227,7 @@ class Position(models.Model):
     description = models.CharField(max_length=255, null=True)
 
     class Meta:
-        managed = False
-        db_table = 'position'
+        verbose_name = 'Должность'
 
     def __str__(self):
         return self.position
@@ -390,9 +246,6 @@ class PreliminaryAgreement(models.Model):
     class Meta:
         verbose_name = "Предварительное соглашение"
         verbose_name_plural = "Предварительные соглашения"
-        managed = False
-        db_table = 'preliminary_agreement'
-        unique_together = (('idpreliminary_agreement', 'organization', 'staff', 'client'),)
 
     def clean(self):
         if self.staff.organization != self.organization:
@@ -407,20 +260,17 @@ class Staff(models.Model):
     position = models.ForeignKey('Position', models.DO_NOTHING, db_column='position', verbose_name="должность", default='1')
     organization = models.ForeignKey('Organization', models.DO_NOTHING, db_column='organization', verbose_name="организация", default='1')
     login = models.CharField(max_length=45, blank=True, null=True)
-    pass_field = models.CharField(db_column='pass', max_length=45, blank=True, null=True)  # Field renamed because it was a Python reserved word.
+    pass_field = models.CharField(db_column='pass', max_length=45, blank=True, null=True)
     last_name = models.CharField(max_length=45, verbose_name="Фамилия")
     name_patronamic = models.CharField(max_length=45, verbose_name="Имя Отчество")
     gender = models.IntegerField(verbose_name="пол", choices=USER_GENDER)
     date_of_birth = models.DateField(blank=True, null=True, verbose_name="дата рождения")
     photo = models.ImageField(blank=True, null=True, verbose_name="фото")
-    user = models.OneToOneField('AuthUser', models.CASCADE, db_column='user', blank=True, null=True)
+    user = models.OneToOneField(User, models.CASCADE, db_column='user', blank=True, null=True)
 
     class Meta:
         verbose_name = "Сотрудник"
         verbose_name_plural = "Сотрудники"
-        managed = True
-        db_table = 'staff'
-        unique_together = (('idstaff', 'position', 'organization'),)
 
     def __str__(self):
         return f'{self.last_name} {self.name_patronamic}'
@@ -432,8 +282,7 @@ class StatusClient(models.Model):
     description = models.CharField(max_length=255, blank=True, null=True, verbose_name="описание")
 
     class Meta:
-        managed = False
-        db_table = 'status_client'
+        verbose_name = 'Статус клиента'
 
     def __str__(self):
         return self.status
@@ -445,8 +294,7 @@ class StatusProcess(models.Model):
     description = models.CharField(max_length=100)
 
     class Meta:
-        managed = False
-        db_table = 'status_process'
+        verbose_name = 'Статус процесса'
 
 
 class Ticket(models.Model):
@@ -457,9 +305,7 @@ class Ticket(models.Model):
     transfer = models.CharField(max_length=45)
 
     class Meta:
-        managed = False
-        db_table = 'ticket'
-        unique_together = (('idticket', 'transport'),)
+        verbose_name = 'Билет'
 
 
 class Transport(models.Model):
@@ -467,8 +313,7 @@ class Transport(models.Model):
     transport = models.CharField(max_length=45)
 
     class Meta:
-        managed = False
-        db_table = 'transport'
+        verbose_name = 'Транспорт'
 
 
 class TypeOfFood(models.Model):
@@ -477,8 +322,7 @@ class TypeOfFood(models.Model):
     description = models.CharField(max_length=100)
 
     class Meta:
-        managed = False
-        db_table = 'type_of_food'
+        verbose_name = 'Тип питания'
 
 
 class TypeOfRoom(models.Model):
@@ -487,8 +331,7 @@ class TypeOfRoom(models.Model):
     description = models.CharField(max_length=100)
 
     class Meta:
-        managed = False
-        db_table = 'type_of_room'
+        verbose_name = 'Тип комнаты'
 
 
 class Visa(models.Model):
@@ -500,6 +343,4 @@ class Visa(models.Model):
     expiration_date = models.DateField()
 
     class Meta:
-        managed = False
-        db_table = 'visa'
-        unique_together = (('number_visa', 'client'),)
+        verbose_name = 'VISA'
